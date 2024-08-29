@@ -1,5 +1,6 @@
 package com.example.user_service.controller;
 
+import com.example.user_service.dto.UserDTO;
 import com.example.user_service.handlers.InvalidUserExceptions;
 import com.example.user_service.handlers.NotFoundUser;
 import com.example.user_service.models.UserEntity;
@@ -23,8 +24,14 @@ public class UserController {
     @Autowired
     private UserValidator userValidator;
 
-    @GetMapping("/{id}")
+/*    @GetMapping("/{id}")
     public Mono<UserEntity> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id)
+                .switchIfEmpty(Mono.error(new NotFoundUser("User no found with id: "+id)));
+    }*/
+
+    @GetMapping("/{id}")
+    public Mono<UserDTO> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .switchIfEmpty(Mono.error(new NotFoundUser("User no found with id: "+id)));
     }
