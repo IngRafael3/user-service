@@ -76,6 +76,11 @@ public class UserServiceImpl implements UserService {
                 .flatMap(userRepository::delete);
     }
 
+    @Override
+    public Mono<UserEntity> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
 
     public Flux<TaskDTO> getTaksFormUser(String email){
         return webClient.get()

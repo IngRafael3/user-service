@@ -1,5 +1,7 @@
 package com.example.user_service.dto;
 
+import com.example.user_service.models.UserEntity;
+
 import java.util.List;
 
 public class UserDTO {
@@ -19,6 +21,9 @@ public class UserDTO {
     }
 
     public UserDTO() {
+    }
+
+    public UserDTO(UserEntity userEntity) {
     }
 
     public Long getId() {

@@ -4,13 +4,16 @@ import com.example.user_service.dto.UserDTO;
 import com.example.user_service.handlers.InvalidUserExceptions;
 import com.example.user_service.handlers.NotFoundUser;
 import com.example.user_service.models.UserEntity;
+import com.example.user_service.repository.UserRepository;
 import com.example.user_service.service.UserService;
 import com.example.user_service.utils.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -24,6 +27,9 @@ public class UserController {
     @Autowired
     private UserValidator userValidator;
 
+    @Autowired
+    private UserRepository userRepository;
+
 /*    @GetMapping("/{id}")
     public Mono<UserEntity> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
@@ -32,8 +38,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     public Mono<UserDTO> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
+
+        Mono<UserDTO> res = userService.getUserById(id)
                 .switchIfEmpty(Mono.error(new NotFoundUser("User no found with id: "+id)));
+        res.subscribe();
+        return res;
     }
 
     @GetMapping
@@ -71,6 +80,13 @@ public class UserController {
     public Mono<Void> deleteUser(@PathVariable Long id) {
         return userService.deleteUser(id)
                 .switchIfEmpty(Mono.error(new NotFoundUser("User no found with id: "+id)));
+    }
+
+    @GetMapping("/current")
+    public Mono<UserDTO> getCurrent(ServerWebExchange exchange){
+        return userRepository.findByEmail(exchange.getRequest().getHeaders().getFirst("username"))
+                .switchIfEmpty(Mono.error(new UsernameNotFoundException("user not found")))
+                .map(UserDTO::new);
     }
 }
 

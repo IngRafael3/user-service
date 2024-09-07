@@ -19,5 +19,7 @@ public interface UserService {
 
     Mono<Void> deleteUser(Long id);
 
+    Mono<UserEntity> getUserByEmail(String email);
+
 
 }
